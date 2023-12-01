@@ -38,10 +38,10 @@ export const ContactList = () => {
             dispatch(deleteContact(id))
               .unwrap()
               .then(() => {
-                toast.success('Contact deleted successfully');
+                toast.success(`Контакт ${name} успешно удален!`);
               })
               .catch(() => {
-                toast.error('Failed to delete contact');
+                toast.error('Упс! Ошибка при удалении контакта!');
               });
           };
 

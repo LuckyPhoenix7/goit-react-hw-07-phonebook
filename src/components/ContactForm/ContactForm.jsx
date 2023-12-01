@@ -41,9 +41,9 @@ export const ContactForm = () => {
         if (isContacts) {
           toast.error(`Контакт ${values.name} уже существует!`);
         } else {
-          dispatch(addContact(values.name, values.number));
+          dispatch(addContact({ name: values.name, phone: values.number }));
           actions.resetForm();
-          toast.success(`${values.name} успешно добавлен!`);
+          toast.success(`Контакт ${values.name} успешно добавлен(а)!`);
         }
       }}
     >

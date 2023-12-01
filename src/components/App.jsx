@@ -12,7 +12,7 @@ export const App = () => {
       <SecondTitle>Contacts</SecondTitle>
       <Filter />
       <ContactList />
-      <Toaster />
+      <Toaster position="top-right" />
     </Layout>
   );
 };
