@@ -7,20 +7,25 @@ import {
   StyledForm,
 } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/contactsSlice';
+import { addContact } from 'redux/operations';
+import { selectContacts } from 'redux/selectors';
+import toast from 'react-hot-toast';
 
 export const ContactForm = () => {
   const schema = Yup.object().shape({
     name: Yup.string()
-      .min(5, 'Должно быть от 5 букв!')
+      .min(3, 'Должно быть от 3 букв!')
       .required('Это обязательное поле!'),
-    number: Yup.number()
-      .required('Это обязательное поле!')
-      .min(6, 'Должно быть от 6 цифр!'),
+    number: Yup.string()
+      .matches(
+        /^\d{3}-\d{3}-\d{4}$/,
+        'Телефон не соответствует стандарту. Должен быть XXX-XXX-XXXX'
+      )
+      .required('Это обязательное поле!'),
   });
 
-  const visibleContact = useSelector(state => state.contacts.contacts);
   const dispatch = useDispatch();
+  const contacts = useSelector(selectContacts);
 
   return (
     <Formik
@@ -30,14 +35,15 @@ export const ContactForm = () => {
       }}
       validationSchema={schema}
       onSubmit={(values, actions) => {
-        const isContacts = visibleContact.some(
+        const isContacts = contacts.some(
           ({ name }) => name.toLowerCase() === values.name.toLowerCase()
         );
         if (isContacts) {
-          alert(`Контакт ${values.name} уже существует!`);
+          toast.error(`Контакт ${values.name} уже существует!`);
         } else {
           dispatch(addContact(values.name, values.number));
           actions.resetForm();
+          toast.success(`${values.name} успешно добавлен!`);
         }
       }}
     >
@@ -49,7 +55,7 @@ export const ContactForm = () => {
         </label>
         <label htmlFor="number">
           Number
-          <StyledField type="number" name="number" />
+          <StyledField name="number" />
           <StyledError component="span" name="number" />
         </label>
         <StyledBtn type="submit">Add contact</StyledBtn>

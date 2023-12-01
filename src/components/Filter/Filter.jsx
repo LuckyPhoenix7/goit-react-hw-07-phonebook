@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setFilter } from 'redux/filterSlice';
 
 export const Filter = () => {
-  const filter = useSelector(state => state.filter.filter);
   const dispatch = useDispatch();
+  const filter = useSelector(state => state.filter.filter);
 
   return (
     <StyledLabel htmlFor="filter">

@@ -1,28 +1,62 @@
 import { StyledList, ListItem, DeleteBtn } from './ContactList.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from 'redux/contactsSlice';
+import { useEffect } from 'react';
+import { fetchContacts, deleteContact } from 'redux/operations';
+import {
+  selectError,
+  selectIsLoading,
+  selectVisibleContacts,
+} from 'redux/selectors';
+import { Loader } from 'components/Loader/Loader';
+import toast from 'react-hot-toast';
 
 export const ContactList = () => {
-  const contacts = useSelector(state => state.contacts.contacts);
-  const filter = useSelector(state => state.filter.filter);
   const dispatch = useDispatch();
 
-  const visibleContact = contacts.filter(({ name }) =>
-    name.toLowerCase().includes(filter.toLowerCase())
-  );
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(`Упс! Ошибка при загрузке контактов: ${error}`);
+    }
+  }, [error]);
+
+  const filtered = useSelector(selectVisibleContacts);
 
   return (
-    <StyledList>
-      {visibleContact.map(({ id, name, number }) => (
-        <ListItem key={id}>
-          <p>
-            {name}: {number}
-          </p>
-          <DeleteBtn type="button" onClick={() => dispatch(deleteContact(id))}>
-            Delete
-          </DeleteBtn>
-        </ListItem>
-      ))}
-    </StyledList>
+    <>
+      {isLoading && <Loader />}
+
+      <StyledList>
+        {filtered.map(({ id, name, phone }) => {
+          const onDelete = () => {
+            dispatch(deleteContact(id))
+              .unwrap()
+              .then(() => {
+                toast.success('Contact deleted successfully');
+              })
+              .catch(() => {
+                toast.error('Failed to delete contact');
+              });
+          };
+
+          return (
+            <ListItem key={id}>
+              <p>
+                {name}: {phone}
+              </p>
+              <DeleteBtn type="button" onClick={onDelete}>
+                Delete
+              </DeleteBtn>
+            </ListItem>
+          );
+        })}
+      </StyledList>
+    </>
   );
 };

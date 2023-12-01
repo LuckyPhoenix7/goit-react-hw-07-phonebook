@@ -2,6 +2,7 @@ import { ContactList } from './ContactList/ContactList';
 import { ContactForm } from './ContactForm/ContactForm';
 import { Filter } from './Filter/Filter';
 import { Layout, FirstTitle, SecondTitle } from './Layout';
+import { Toaster } from 'react-hot-toast';
 
 export const App = () => {
   return (
@@ -11,6 +12,7 @@ export const App = () => {
       <SecondTitle>Contacts</SecondTitle>
       <Filter />
       <ContactList />
+      <Toaster />
     </Layout>
   );
 };
